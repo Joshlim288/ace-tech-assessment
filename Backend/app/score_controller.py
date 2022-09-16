@@ -7,11 +7,11 @@ import re
 from datetime import datetime
 
 # project imports
+import data_access
 from data_definition import Team
-from data_access import commitTeamsToDatabase
 
 # Constants
-TEAM_INFO_REGEX = "[a-zA-Z0-9]+\s[0-9]{2}\/[0-9]{2}\s[0-9]+"
+TEAM_INFO_REGEX = "\s*[a-zA-Z0-9]+\s[0-9]{2}\/[0-9]{2}\s[0-9]+\s*"
 MATCH_ENTRY_REGEX = "(([a-zA-Z0-9]+\s){2}([0-9]+\s){2})"
 
 '''
@@ -31,10 +31,10 @@ def registerTeams(rawInput):
     for teamString in teamsStrings:
         # validate format of each entered team string
         if not re.fullmatch(TEAM_INFO_REGEX, teamString):
-            return (400, 'Invalid data format')
+            return (400, 'Invalid data format for team ' + teamString)
 
-        teamName, regDate, group = teamString.split(' ')
-        
+        teamName, regDate, group = teamString.strip().split(' ')
+
         # validate date logic
         try:
             regDate = datetime.strptime(regDate, "%d/%m")
@@ -48,6 +48,8 @@ def registerTeams(rawInput):
         teams += [Team(teamName, regDate, group)]
 
     # all teams valid
-    commitTeamsToDatabase(teams)
-    return (200, 'Success')
+    if data_access.commitTeamsToDatabase(teams):
+        return (200, 'Success')
+    else:
+        return (500, 'Database error')
     
