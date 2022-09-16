@@ -7,6 +7,23 @@ Saves a new team to the database
 takes in a List of Team objects
 returns True if successfully added
 '''
-def commitTeamsToDatabase(teams):
+def addTeamsToDatabase(teams):
     #TODO
     return True
+
+'''
+Updates the Team objects in the database with the same team names
+takes in a List of Team objects
+returns True if successfully updated
+'''
+def updateTeams(teams):
+    #TODO
+    return True
+
+'''
+Retreive all teams currently registered
+Returns a Dictionary where keys are the team's name, and the value is the Team object
+'''
+def getTeams():
+    #TODO
+    return {}
