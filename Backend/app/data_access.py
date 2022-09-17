@@ -1,6 +1,16 @@
 '''
 Contains the logic for storing and retrieving data from the database
 '''
+# library imports
+import pymongo
+from datetime import datetime
+
+# project imports
+from data_definition import Team
+
+client = pymongo.MongoClient('mongodb://localhost:27017/')
+db = client.football_db
+collection = db.teams
 
 '''
 Saves a new team to the database
@@ -8,7 +18,8 @@ takes in a List of Team objects
 returns True if successfully added
 '''
 def addTeamsToDatabase(teams):
-    #TODO
+    for team in teams:
+        collection.insert_one(team.toDoc())
     return True
 
 '''
@@ -17,21 +28,23 @@ takes in a List of Team objects
 returns True if successfully updated
 '''
 def updateTeams(teams):
-    #TODO
+    for team in teams:
+        # update only attributes related to score
+        collection.update_one({'_id':team.teamName}, {"$set": {'points': team.points,'goalsScored': team.goalsScored,'altPoints': team.altPoints}}, upsert=False)
     return True
 
 '''
-Retreive all teams currently registered
+Retrieve all teams currently registered
 Returns a Dictionary where keys are the team's name, and the value is the Team object
 '''
 def getTeams():
-    #TODO
-    return {}
+    teams = list(collection.find({}))
+    return {teamDoc['_id']: Team.fromDoc(teamDoc) for teamDoc in teams}
 
 '''
 Clears all teams (and thus results) from the database
 Returns True if successful
 '''
 def deleteTeams():
-    #TODO
+    collection.delete_many({})
     return True
