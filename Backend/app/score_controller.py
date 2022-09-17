@@ -12,7 +12,7 @@ from data_definition import Team
 
 # Constants
 TEAM_INFO_REGEX = "\s*[a-zA-Z0-9]+\s[0-9]{2}\/[0-9]{2}\s[0-9]+\s*"
-MATCH_ENTRY_REGEX = "\s*([a-zA-Z0-9]+\s){2}([0-9]+\s){2}\s*"
+MATCH_ENTRY_REGEX = "\s*([a-zA-Z0-9]+\s){2}[0-9]+\s[0-9]\s*"
 
 '''
 Enter team information into the system
@@ -104,7 +104,7 @@ def inputMatchResult(rawResults):
         AName, BName, scoreA, scoreB = result.strip().split(' ')
 
         # check team registered
-        if teamA not in teams or teamB not in teams:
+        if AName not in teams or BName not in teams:
             return (400, 'Unregistered team present for result: ', result)
 
         # update scores
