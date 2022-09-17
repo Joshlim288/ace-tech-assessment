@@ -3,6 +3,7 @@ SCORE CONTROLLER
 Contains the main business logic for the application
 '''
 # library imports
+import operator
 import re
 from datetime import datetime
 
@@ -46,7 +47,7 @@ def registerTeams(rawTeams):
         if teamName in seenNames:
             return (400, 'Duplicate team name: ', teamName)
 
-        teams += [Team(teamName, regDate, group)]
+        teams += [Team(teamName, regDate, int(group))]
 
     # commit updates
     if not data_access.addTeamsToDatabase(teams):
@@ -119,4 +120,28 @@ def inputMatchResult(rawResults):
         return (500, 'Database error')
 
     return (200, 'Success')
+
+'''
+retrieves all teams currently registered, arranged according to ranking within the individual groups
+ranking is based on Normal points > total goals > alt match points > earliest reg date
+returns a dictionary of the following format:
+{
+    groupNumber: [teamA, teamB, ...],
+    ...
+}
+'''
+def getScoreboard():
+    teams = data_access.getTeams()
+    scoreboard = {}
+    # split the teams into their groups
+    for team in teams:
+        scoreboard[team.group] = scoreboard.get(team.group, []) + [team]
+
+    # sort the groups
+    for group in scoreboard.keys():
+        # Normal points > total goals > alt match points > earliest reg date
+        # negation allows for sorting in descending order
+        scoreboard[group].sort(key=lambda x: (-x.points, -x.goalsScored, -x.altPoints, x.regDate))
     
+    return scoreboard
+
