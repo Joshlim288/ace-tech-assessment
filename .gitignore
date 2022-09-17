@@ -7,3 +7,5 @@ Backend/__pycache__/
 Backend/app/__pycache__/api_controller.cpython-37.pyc
 
 Backend/app/__pycache__/api_controller.cpython-39.pyc
+
+Backend/app/__pycache__/__init__.cpython-39.pyc

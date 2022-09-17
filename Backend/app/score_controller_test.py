@@ -8,8 +8,8 @@ from string import ascii_uppercase
 from datetime import datetime
 
 # project imports
-from app.data_definition import Team
-from app.score_controller import registerTeams, inputMatchResult, getScoreboard
+from data_definition import Team
+from score_controller import registerTeams, inputMatchResult, getScoreboard
 
 class ScoreControllerCase(unittest.TestCase):
     @mock.patch('score_controller.data_access')
@@ -20,7 +20,7 @@ class ScoreControllerCase(unittest.TestCase):
         teamInput = 'teamA 01/04 1\nteamB 02/05 1\nteamC 03/06 1\nteamD 04/06 1\nteamE 05/06 1\nteamF 15/06 1\n\
             teamG 14/06 2\nteamH 13/06 2\nteamI 12/06 2\n teamJ 11/06 2\nteamK 10/06 2\nteamL 27/06 2'        
         response = registerTeams(teamInput)
-        assert response[0] == 200, "Valid input rejected with return value " + str(response)
+        assert response[1] == 200, "Valid input rejected with return value " + str(response)
     
     @mock.patch('score_controller.data_access')
     def testRegisterValidMatch(self, mock_DAL):
@@ -33,7 +33,7 @@ class ScoreControllerCase(unittest.TestCase):
         teamG teamJ 1 0\nteamG teamK 1 4\nteamG teamL 1 4\nteamH teamI 2 0\nteamH teamJ 3 0\nteamH teamK 3 4\nteamH teamL 0 1\nteamI teamJ 2 1\nteamI teamK 3 0\n\
         teamI teamL 1 3\nteamJ teamK 1 4\nteamJ teamL 0 3\nteamK teamL 0 0'
         response = inputMatchResult(matchInput)
-        assert response[0] == 200, "Valid input rejected with return value " + str(response)
+        assert response[1] == 200, "Valid input rejected with return value " + str(response)
     
     @mock.patch('score_controller.data_access')
     def testRegisterValidTeams(self, mock_DAL):

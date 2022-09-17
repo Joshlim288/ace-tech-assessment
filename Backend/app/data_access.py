@@ -3,7 +3,6 @@ Contains the logic for storing and retrieving data from the database
 '''
 # library imports
 import pymongo
-from datetime import datetime
 
 # project imports
 from data_definition import Team
