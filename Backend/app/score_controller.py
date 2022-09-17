@@ -24,7 +24,7 @@ Takes in a string with the following syntax:
 <Team C name> <Team C registration date in DD/MM> <Team C group number>
 
 Returns a tuple of the following format:
-(Status code, message)
+message, statusCode
 '''
 def registerTeams(rawTeams):
     teamsStrings = rawTeams.split('\n')
@@ -33,7 +33,7 @@ def registerTeams(rawTeams):
     for teamString in teamsStrings:
         # validate format of each entered team string
         if not re.fullmatch(TEAM_INFO_REGEX, teamString):
-            return (400, 'Invalid data format for team: ' + teamString)
+            return 'Invalid data format for team: ' + teamString, 400
 
         teamName, regDate, group = teamString.strip().split(' ')
 
@@ -41,19 +41,19 @@ def registerTeams(rawTeams):
         try:
             regDate = datetime.strptime(regDate, "%d/%m")
         except:
-            return (400, 'Invalid registration date: ', regDate)
+            return 'Invalid registration date: ' + str(regDate), 400
         
         # ensure teamname unique
         if teamName in seenNames:
-            return (400, 'Duplicate team name: ', teamName)
+            return 'Duplicate team name: ' + teamName, 400
 
         teams += [Team(teamName, regDate, int(group))]
 
     # commit updates
     if not data_access.addTeamsToDatabase(teams):
-        return (500, 'Database error')
+        return 'Database error', 500
         
-    return (200, 'Success')
+    return 'Success', 200
         
 
 '''
@@ -92,7 +92,7 @@ Takes in a string with the following syntax:
 <Team C name> <Team D name> <Team C goals scored> <Team D goals scored>
 
 Returns a tuple of the following format:
-(Status code, message)
+message, statusCode
 '''
 def inputMatchResult(rawResults):
     teams = data_access.getTeams()
@@ -101,12 +101,12 @@ def inputMatchResult(rawResults):
     for result in results:
         # validate format of each entered result string
         if not re.fullmatch(MATCH_ENTRY_REGEX, result):
-            return (400, 'Invalid data format for result: ' + result)
+            return 'Invalid data format for result: ' + result, 400
         AName, BName, scoreA, scoreB = result.strip().split(' ')
 
         # check team registered
         if AName not in teams or BName not in teams:
-            return (400, 'Unregistered team present for result: ', result)
+            return 'Unregistered team present for result: ' + result, 400
 
         # update scores
         teamA, teamB = teams[AName], teams[BName]
@@ -117,9 +117,9 @@ def inputMatchResult(rawResults):
 
     # commit updates
     if not data_access.updateTeams(toUpdate.values()):
-        return (500, 'Database error')
+        return 'Database error', 500
 
-    return (200, 'Success')
+    return 'Success', 200
 
 '''
 retrieves all teams currently registered, arranged according to ranking within the individual groups
