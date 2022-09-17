@@ -6,8 +6,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 # project imports
-import score_controller
-from data_access import deleteTeams
+import app.score_controller
+from app.data_access import deleteTeams
 
 app = Flask(__name__)
 cors = CORS(app)

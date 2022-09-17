@@ -3,13 +3,12 @@ SCORE CONTROLLER
 Contains the main business logic for the application
 '''
 # library imports
-import operator
 import re
 from datetime import datetime
 
 # project imports
-import data_access
-from data_definition import Team
+from app.data_definition import Team
+from app.data_access import *
 
 # Constants
 TEAM_INFO_REGEX = "\s*[a-zA-Z0-9]+\s[0-9]{2}\/[0-9]{2}\s[0-9]+\s*"
@@ -50,7 +49,7 @@ def registerTeams(rawTeams):
         teams += [Team(teamName, regDate, int(group))]
 
     # commit updates
-    if not data_access.addTeamsToDatabase(teams):
+    if not addTeamsToDatabase(teams):
         return 'Database error', 500
         
     return 'Success', 200
@@ -95,7 +94,7 @@ Returns a tuple of the following format:
 message, statusCode
 '''
 def inputMatchResult(rawResults):
-    teams = data_access.getTeams()
+    teams = getTeams()
     toUpdate = {} # so we don't have to update teams that are not modified
     results = rawResults.split('\n')
     for result in results:
@@ -116,7 +115,7 @@ def inputMatchResult(rawResults):
         toUpdate[AName], toUpdate[BName] = teamA, teamB
 
     # commit updates
-    if not data_access.updateTeams(toUpdate.values()):
+    if not updateTeams(toUpdate.values()):
         return 'Database error', 500
 
     return 'Success', 200
@@ -131,7 +130,7 @@ returns a dictionary of the following format:
 }
 '''
 def getScoreboard():
-    teams = data_access.getTeams()
+    teams = getTeams()
     scoreboard = {}
     # split the teams into their groups
     for team in teams.values():

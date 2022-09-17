@@ -1,3 +1,9 @@
 Backend/app/__pycache__/data_access.cpython-39.pyc
 Backend/app/__pycache__/data_definition.cpython-39.pyc
 Backend/app/__pycache__/score_controller.cpython-39.pyc
+
+Backend/__pycache__/
+
+Backend/app/__pycache__/api_controller.cpython-37.pyc
+
+Backend/app/__pycache__/api_controller.cpython-39.pyc

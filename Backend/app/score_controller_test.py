@@ -1,13 +1,15 @@
 '''
 Unit tests for score_controller.py
 '''
-
+# library imports
 import unittest
 from unittest import mock
 from string import ascii_uppercase
-from data_definition import Team
-from score_controller import registerTeams, inputMatchResult, getScoreboard
 from datetime import datetime
+
+# project imports
+from app.data_definition import Team
+from app.score_controller import registerTeams, inputMatchResult, getScoreboard
 
 class ScoreControllerCase(unittest.TestCase):
     @mock.patch('score_controller.data_access')
