@@ -6,8 +6,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 # project imports
-import app.score_controller
-from app.data_access import deleteTeams
+from score_controller import *
+from data_access import deleteTeams
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -25,7 +25,8 @@ Sent data must be of the format:
 '''
 @app.route("/teams", methods=['POST'])
 def addTeams():
-    return score_controller.registerTeams(request.args.get('teams'))
+    print(request)
+    return registerTeams(request.json['teams'])
 
 '''
 Add in a new set of results to the database
@@ -36,19 +37,23 @@ Sent data must be of the format:
 '''
 @app.route("/results", methods=['POST'])
 def enterResults():
-    return score_controller.inputMatchResult(request.args.get('results'))
+    return inputMatchResult(request.json['results'])
 
 '''
 Returns the current scoreboard for the competition
 '''
 @app.route("/scoreboard")
 def getCurrentScoreboard():
-    return jsonify(score_controller.getScoreboard())
+    # we need to convert Team objects to dictionaries for JSON response
+    convertedDict = {}
+    for k, v in getScoreboard().items():
+        convertedDict[k] = [team.toDoc() for team in v]
+    return jsonify(convertedDict)
 
 '''
 Removes all team data from the system
 '''
-@app.route("/reset")
+@app.route("/reset", methods=['DELETE'])
 def resetDatabase():
     deleteTeams()
     return "Success", 200
