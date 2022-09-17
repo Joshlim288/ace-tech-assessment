@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 from string import ascii_uppercase
 from data_definition import Team
-from score_controller import registerTeams, inputMatchResult
+from score_controller import registerTeams, inputMatchResult, getScoreboard
 from datetime import datetime
 
 class ScoreControllerCase(unittest.TestCase):
@@ -32,6 +32,33 @@ class ScoreControllerCase(unittest.TestCase):
         teamI teamL 1 3\nteamJ teamK 1 4\nteamJ teamL 0 3\nteamK teamL 0 0'
         response = inputMatchResult(matchInput)
         assert response[0] == 200, "Valid input rejected with return value " + str(response)
+    
+    @mock.patch('score_controller.data_access')
+    def testRegisterValidTeams(self, mock_DAL):
+        # setup mock data access layer
+        # Normal points > total goals > alt match points > earliest reg date
+        # A clear winner, B-E tied by points, C-E tied by goals, D-E tied by altPoints
+        # Correct order should be A(point win)->B(goal win)->C(alt score win)->D(reg date win)->E
+        teamA = Team('teamA', '01/01', 0)
+        teamB = Team('teamB', '01/01', 0)
+        teamC = Team('teamC', '01/01', 0)
+        teamD = Team('teamD', '01/01', 0)
+        teamE = Team('teamE', '02/01', 0)
+        teamA.points = 1
+        teamB.goalsScored = 1
+        teamC.altPoints = 1
+        mock_DAL.getTeams.return_value = {
+            'teamA':teamA,
+            'teamB':teamB,
+            'teamC':teamC,
+            'teamD':teamD,
+            'teamE':teamE
+        }
+
+        response = getScoreboard()
+        arrangement = [team.teamName for team in response[0]]
+        correctArrangement = ['teamA', 'teamB', 'teamC', 'teamD', 'teamE']
+        assert arrangement == correctArrangement, "Wrong scoreboard arrangement " + str(arrangement)
 
     #TODO: test invalid inputs
 
