@@ -134,7 +134,7 @@ def getScoreboard():
     teams = data_access.getTeams()
     scoreboard = {}
     # split the teams into their groups
-    for team in teams:
+    for team in teams.values():
         scoreboard[team.group] = scoreboard.get(team.group, []) + [team]
 
     # sort the groups
@@ -144,4 +144,3 @@ def getScoreboard():
         scoreboard[group].sort(key=lambda x: (-x.points, -x.goalsScored, -x.altPoints, x.regDate))
     
     return scoreboard
-
