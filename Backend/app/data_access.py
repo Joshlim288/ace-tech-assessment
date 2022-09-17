@@ -27,3 +27,11 @@ Returns a Dictionary where keys are the team's name, and the value is the Team o
 def getTeams():
     #TODO
     return {}
+
+'''
+Clears all teams (and thus results) from the database
+Returns True if successful
+'''
+def deleteTeams():
+    #TODO
+    return True
