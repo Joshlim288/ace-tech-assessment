@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api_connection.dart';
+
+import 'input_alert_dialog.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,13 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class Team {
-  const Team(
-    this.name,
-    this.group,
-    this.points,
-    this.goalsScored,
-    this.altPoints,
-  );
+  const Team(this.name, this.group, this.points, this.goalsScored, this.altPoints);
   final String name;
   final int group;
   final int points;
@@ -45,9 +42,22 @@ class Team {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Map<int, List<Team>> groups = {
-    0: [const Team('test', 0, 0, 0, 0)]
-  };
+  Map<int, List<Team>> groups = {};
+
+  Future<void> showInputDialog(String title, String prompt, IconData icon, isInput, Function submitFunction) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => InputDialog(
+        title: title,
+        prompt: prompt,
+        icon: icon,
+        isInput: isInput,
+        submitFunction: submitFunction,
+      ),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +80,23 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           Row(
             children: [
-              TextButton(onPressed: () {}, child: const Text('Enter Teams', style: TextStyle(color: Colors.black))),
+              TextButton(
+                onPressed: () {
+                  showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
+                },
+                child: const Text(
+                  'Enter Teams',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
               Container(width: 10),
               TextButton(onPressed: () {}, child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
               Container(width: 10),
-              TextButton(onPressed: () {}, child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
+              TextButton(
+                  onPressed: () {
+                    showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
+                  },
+                  child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
               Container(width: 50),
             ],
           )
