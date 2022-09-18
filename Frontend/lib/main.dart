@@ -123,72 +123,73 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        elevation: 1,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            widget.title,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          toolbarHeight: 80,
+          elevation: 1,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          title: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              widget.title,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
+          actions: [
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    await showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
+                    getScoreboard();
+                  },
+                  child: const Text(
+                    'Enter Teams',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                Container(width: 10),
+                TextButton(
+                    onPressed: () async {
+                      await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
+                      getScoreboard();
+                    },
+                    child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
+                Container(width: 10),
+                TextButton(
+                    onPressed: () async {
+                      await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
+                      getScoreboard();
+                    },
+                    child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
+                Container(width: 50),
+              ],
+            )
+          ],
         ),
-        actions: [
-          Row(
-            children: [
-              TextButton(
-                onPressed: () async {
-                  await showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
-                  getScoreboard();
-                },
-                child: const Text(
-                  'Enter Teams',
-                  style: TextStyle(color: Colors.black),
-                ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(30),
+              child: Column(
+                children: <Widget>[
+                  const Text(
+                    'Scoreboard',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: '',
+                    ),
+                  ),
+                  Container(height: 20),
+                  if (groups.isNotEmpty) scoreboardGridView() else const Text('No data entered')
+                ],
               ),
-              Container(width: 10),
-              TextButton(
-                  onPressed: () async {
-                    await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
-                    getScoreboard();
-                  },
-                  child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
-              Container(width: 10),
-              TextButton(
-                  onPressed: () async {
-                    await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
-                    getScoreboard();
-                  },
-                  child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
-              Container(width: 50),
-            ],
-          )
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            children: <Widget>[
-              const Text(
-                'Scoreboard',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: '',
-                ),
-              ),
-              Container(height: 20),
-              if (groups.isNotEmpty) scoreboardGridView() else const Text('No data entered')
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
