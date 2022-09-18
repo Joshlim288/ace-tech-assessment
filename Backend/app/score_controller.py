@@ -26,7 +26,7 @@ Returns a tuple of the following format:
 message, statusCode
 '''
 def registerTeams(rawTeams):
-    teamsStrings = rawTeams.split('\n')
+    teamsStrings = rawTeams.strip().split('\n')
     teams = []
     seenNames = set()
     for teamString in teamsStrings:
@@ -96,7 +96,7 @@ message, statusCode
 def inputMatchResult(rawResults):
     teams = data_access.getTeams()
     toUpdate = {} # so we don't have to update teams that are not modified
-    results = rawResults.split('\n')
+    results = rawResults.strip().split('\n')
     for result in results:
         # validate format of each entered result string
         if not re.fullmatch(MATCH_ENTRY_REGEX, result):
