@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 /// Contains logic for both checking and updating password, since they are very similar
 class InputDialog extends StatefulWidget {
-  const InputDialog({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.prompt,
-  }) : super(key: key);
+  const InputDialog({Key? key, required this.icon, required this.title, required this.prompt, required this.submitFunction, required this.isInput}) : super(key: key);
   final IconData icon;
   final String title;
   final String prompt;
+  final Function submitFunction;
+  final bool isInput;
 
   @override
   InputDialogState createState() => InputDialogState();
@@ -18,6 +16,8 @@ class InputDialog extends StatefulWidget {
 
 class InputDialogState extends State<InputDialog> {
   final TextEditingController dialogController = TextEditingController();
+  bool isLoading = false;
+  String? response;
 
   @override
   Widget build(BuildContext context) {
@@ -40,35 +40,42 @@ class InputDialogState extends State<InputDialog> {
           children: <Widget>[
             // password
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                widget.prompt,
-              ),
-            ),
             const SizedBox(height: 5),
-            SizedBox(
-              width: 400,
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    // width: 0.0 produces a thin "hairline" border
-                    borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-                controller: dialogController,
-                minLines: 5,
-                maxLines: 5,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a value';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            // Widgets relating to 2nd field for confirming password will not be created if not in update mode
+            isLoading
+                ? const CircularProgressIndicator()
+                : response != null
+                    ? Text(response!)
+                    : Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.prompt,
+                            ),
+                          ),
+                          if (widget.isInput)
+                            SizedBox(
+                              width: 400,
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                                  ),
+                                  border: OutlineInputBorder(),
+                                ),
+                                controller: dialogController,
+                                minLines: 5,
+                                maxLines: 5,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a value';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                        ],
+                      )
           ],
         ),
       ),
@@ -76,18 +83,37 @@ class InputDialogState extends State<InputDialog> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text(
-            'Cancel',
+            'Close',
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        TextButton(
-          onPressed: () {
-            if (formKey.currentState!.validate()) {
-              Navigator.pop(context, dialogController.text);
-            }
-          },
-          child: const Text('Confirm', style: TextStyle(color: Colors.blue)),
-        ),
+        // only show when not loading, and when no response received
+        if (!isLoading && response == null)
+          TextButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                setState(() {
+                  isLoading = true;
+                });
+                if (widget.isInput) {
+                  widget.submitFunction(dialogController.text, (returnStr) {
+                    setState(() {
+                      isLoading = false;
+                      response = returnStr;
+                    });
+                  });
+                } else {
+                  widget.submitFunction((returnStr) {
+                    setState(() {
+                      isLoading = false;
+                      response = returnStr;
+                    });
+                  });
+                }
+              }
+            },
+            child: const Text('Confirm', style: TextStyle(color: Colors.blue)),
+          ),
       ],
     );
   }
