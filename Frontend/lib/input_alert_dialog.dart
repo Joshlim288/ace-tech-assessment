@@ -44,7 +44,7 @@ class InputDialogState extends State<InputDialog> {
             isLoading
                 ? const CircularProgressIndicator()
                 : response != null
-                    ? Text(response!)
+                    ? Text(response!, style: const TextStyle(color: Colors.black))
                     : Column(
                         children: [
                           Align(
