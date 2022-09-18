@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-/// Contains logic for both checking and updating password, since they are very similar
+/// Contains logic for the dialogs shown in the application
+/// Supports dialogs with and without input
+/// Allows provision of the text to be displayed, and what API to call
 class InputDialog extends StatefulWidget {
   const InputDialog({Key? key, required this.icon, required this.title, required this.prompt, required this.submitFunction, required this.isInput}) : super(key: key);
   final IconData icon;

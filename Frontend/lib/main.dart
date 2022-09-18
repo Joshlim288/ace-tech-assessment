@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/api_connection.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -10,10 +9,10 @@ void main() {
   runApp(const MyApp());
 }
 
+/// Entry point of the application, defines the home page
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,6 +37,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic> groups = {};
 
+  /// Used to display a dialog when one of the appbar options are clicked
   Future<void> showInputDialog(String title, String prompt, IconData icon, isInput, Function submitFunction) async {
     await showDialog(
       context: context,
@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// Used to refresh scoreboard data on opening the page, or on taking an action (like adding teams)
   Future<void> getScoreboard() async {
     ApiConnection.getScoreboard((response) {
       setState(() {
@@ -59,59 +60,66 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Defines the grid of scoreboards, one scoreboard for each group
   Widget scoreboardGridView() {
     String currentGroup;
     List<dynamic> teams;
     return Center(
-        child: ResponsiveGridList(
-            shrinkWrap: true,
-            desiredItemWidth: 650,
-            children: groups.keys.map((i) {
-              currentGroup = i;
-              teams = groups[currentGroup] as List<dynamic>;
-              return Card(
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Align(
-                        child: Text(
-                          'GROUP $currentGroup',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+      child: ResponsiveGridList(
+        shrinkWrap: true,
+        desiredItemWidth: 650,
+        children: groups.keys.map(
+          (i) {
+            currentGroup = i;
+            teams = groups[currentGroup] as List<dynamic>;
+            // One Card for one group
+            return Card(
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      child: Text(
+                        'GROUP $currentGroup',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      DataTable(
-                        showBottomBorder: true,
-                        columns: const <DataColumn>[
-                          DataColumn(label: Text('Rank')),
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Points')),
-                          DataColumn(label: Text('Goals Scored')),
-                          DataColumn(label: Text('Alternate Points')),
-                        ],
-                        rows: <DataRow>[
-                          for (int j = 0; j < teams.length; j++)
-                            DataRow(cells: [
-                              DataCell(Text((j + 1).toString())),
-                              DataCell(Text(teams[j]['_id'].toString())),
-                              DataCell(Text(teams[j]['points'].toString())),
-                              DataCell(Text(teams[j]['goalsScored'].toString())),
-                              DataCell(Text(teams[j]['altPoints'].toString())),
-                            ])
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 10),
+                    DataTable(
+                      showBottomBorder: true,
+                      columns: const <DataColumn>[
+                        DataColumn(label: Text('Rank')),
+                        DataColumn(label: Text('Name')),
+                        DataColumn(label: Text('Points')),
+                        DataColumn(label: Text('Goals Scored')),
+                        DataColumn(label: Text('Alternate Points')),
+                      ],
+                      rows: <DataRow>[
+                        // One row for one team
+                        for (int j = 0; j < teams.length; j++)
+                          DataRow(cells: [
+                            DataCell(Text((j + 1).toString())),
+                            DataCell(Text(teams[j]['_id'].toString())),
+                            DataCell(Text(teams[j]['points'].toString())),
+                            DataCell(Text(teams[j]['goalsScored'].toString())),
+                            DataCell(Text(teams[j]['altPoints'].toString())),
+                          ])
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-              );
-            }).toList()));
+              ),
+            );
+          },
+        ).toList(),
+      ),
+    );
   }
 
   @override
