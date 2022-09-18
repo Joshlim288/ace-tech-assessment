@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic> groups = {};
 
   Future<void> showInputDialog(String title, String prompt, IconData icon, isInput, Function submitFunction) async {
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) => InputDialog(
         title: title,
