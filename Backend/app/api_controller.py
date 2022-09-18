@@ -53,7 +53,7 @@ def getCurrentScoreboard():
 '''
 Removes all team data from the system
 '''
-@app.route("/reset", methods=['DELETE'])
+@app.route("/teams", methods=['DELETE'])
 def resetDatabase():
     deleteTeams()
     return "Success", 200
