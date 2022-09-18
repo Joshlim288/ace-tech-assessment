@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/api_connection.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 
 import 'input_alert_dialog.dart';
 
@@ -32,17 +35,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class Team {
-  const Team(this.name, this.group, this.points, this.goalsScored, this.altPoints);
-  final String name;
-  final int group;
-  final int points;
-  final int goalsScored;
-  final int altPoints;
-}
-
 class _MyHomePageState extends State<MyHomePage> {
-  Map<int, List<Team>> groups = {};
+  Map<String, dynamic> groups = {};
 
   Future<void> showInputDialog(String title, String prompt, IconData icon, isInput, Function submitFunction) async {
     showDialog(
@@ -57,7 +51,74 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  showAlertDialog(BuildContext context) {}
+  Future<void> getScoreboard() async {
+    ApiConnection.getScoreboard((response) {
+      setState(() {
+        groups = jsonDecode(response);
+      });
+    });
+  }
+
+  Widget scoreboardGridView() {
+    String currentGroup;
+    List<dynamic> teams;
+    return Center(
+        child: ResponsiveGridList(
+            shrinkWrap: true,
+            desiredItemWidth: 650,
+            children: groups.keys.map((i) {
+              currentGroup = i;
+              teams = groups[currentGroup] as List<dynamic>;
+              return Card(
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        child: Text(
+                          'GROUP $currentGroup',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      DataTable(
+                        showBottomBorder: true,
+                        columns: const <DataColumn>[
+                          DataColumn(label: Text('Rank')),
+                          DataColumn(label: Text('Name')),
+                          DataColumn(label: Text('Points')),
+                          DataColumn(label: Text('Goals Scored')),
+                          DataColumn(label: Text('Alternate Points')),
+                        ],
+                        rows: <DataRow>[
+                          for (int j = 0; j < teams.length; j++)
+                            DataRow(cells: [
+                              DataCell(Text((j + 1).toString())),
+                              DataCell(Text(teams[j]['_id'].toString())),
+                              DataCell(Text(teams[j]['points'].toString())),
+                              DataCell(Text(teams[j]['goalsScored'].toString())),
+                              DataCell(Text(teams[j]['altPoints'].toString())),
+                            ])
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              );
+            }).toList()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getScoreboard();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             children: [
               TextButton(
-                onPressed: () {
-                  showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
+                onPressed: () async {
+                  await showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
+                  getScoreboard();
                 },
                 child: const Text(
                   'Enter Teams',
@@ -90,11 +152,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Container(width: 10),
-              TextButton(onPressed: () {}, child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
+              TextButton(
+                  onPressed: () async {
+                    await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
+                    getScoreboard();
+                  },
+                  child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
               Container(width: 10),
               TextButton(
-                  onPressed: () {
-                    showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
+                  onPressed: () async {
+                    await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
+                    getScoreboard();
                   },
                   child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
               Container(width: 50),
@@ -116,50 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Container(height: 20),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'GROUP 1',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DataTable(
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Text('Rank'),
-                          ),
-                          DataColumn(
-                            label: Text('Name'),
-                          ),
-                          DataColumn(
-                            label: Text('Points'),
-                          ),
-                          DataColumn(
-                            label: Text('Goals Scored'),
-                          ),
-                          DataColumn(
-                            label: Text('Alternate Points'),
-                          ),
-                        ],
-                        rows: const <DataRow>[
-                          DataRow(cells: [
-                            DataCell(Text('1')),
-                            DataCell(Text('Arshik')),
-                            DataCell(Text('5644645')),
-                            DataCell(Text('3')),
-                            DataCell(Text('265')),
-                          ])
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              if (groups.isNotEmpty) scoreboardGridView() else const Text('No data entered')
             ],
           ),
         ),
