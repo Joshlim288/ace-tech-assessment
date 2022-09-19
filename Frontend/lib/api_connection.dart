@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:html' as html;
 
 import 'package:http/http.dart' as http;
 
 /// Provides methods to the rest of the application for calling the backend APIs
 class ApiConnection {
   final http.Client client = http.Client();
-  static const String baseUrl = "http://127.0.0.1:5000/";
+  static String baseUrl = 'http://${html.window.location.hostname}:5000/';
 
   /// Enter a new batch of teams into the system
   static Future<void> enterTeams(String teams, Function(String) callback) async {

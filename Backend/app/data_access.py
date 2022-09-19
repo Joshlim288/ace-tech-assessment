@@ -3,12 +3,14 @@ Contains the logic for storing and retrieving data from the database
 '''
 # library imports
 import pymongo
+from pathlib import Path
 
 # project imports
 from data_definition import Team
-
-client = pymongo.MongoClient('mongodb://localhost:27017/')
-db = client.football_db
+with open(str(Path.cwd()) + '/app/config.txt') as f:
+    pwd = f.read()
+client = pymongo.MongoClient('mongodb+srv://football_admin:'+pwd+'@football-scoreboard.yeiitf8.mongodb.net/?retryWrites=true&w=majority')
+db = client.football_scoreboard
 collection = db.teams
 
 '''

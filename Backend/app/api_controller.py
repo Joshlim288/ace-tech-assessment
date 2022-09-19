@@ -3,15 +3,14 @@ Contains the API definitions to request data from the server
 '''
 # library imports
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 # project imports
 from score_controller import *
 from data_access import deleteTeams
 
 app = Flask(__name__)
-
-if __name__ == "__main__":
-  app.run()
+CORS = CORS(app)
 
 @app.route("/")
 def landing_page():
@@ -58,3 +57,6 @@ Removes all team data from the system
 def resetDatabase():
     deleteTeams()
     return "Success", 200
+
+if __name__ == "__main__":
+  app.run()
