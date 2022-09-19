@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Container(height: 20),
-                  if (groups.isNotEmpty) scoreboardGridView() else const Text('No data entered')
+                  if (groups.isNotEmpty) scoreboardGridView() else const Text('No Data Entered')
                 ],
               ),
             ),

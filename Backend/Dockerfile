@@ -9,4 +9,4 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD [ "python3", "-m" , "flask", "--app=app/api_controller.py", "run", "--host=0.0.0.0"]
+CMD python3 -m flask --app=app/api_controller.py run --host=0.0.0.0 --port=$PORT

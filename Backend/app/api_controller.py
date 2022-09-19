@@ -4,6 +4,7 @@ Contains the API definitions to request data from the server
 # library imports
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 
 # project imports
 from score_controller import *
@@ -59,4 +60,4 @@ def resetDatabase():
     return "Success", 200
 
 if __name__ == "__main__":
-  app.run()
+  app.run(port=int(os.getenv('PORT')))
