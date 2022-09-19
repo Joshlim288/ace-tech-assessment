@@ -1,0 +1,19 @@
+version: '3' # specify docker-compose version
+
+# Define the services/containers to be run
+services:
+  flutter: # name of the first service
+    build: ./Frontend # specify the directory of the Dockerfile
+    ports:
+      - "8080:80" # specify port forewarding
+    links:
+      - "flask"
+    depends_on:
+      - "flask"
+
+  flask: #name of the second service
+    build: ./Backend # specify the directory of the Dockerfile
+    ports:
+      - "5000:5000" #specify ports forewarding
+    expose:
+      - "5000"
