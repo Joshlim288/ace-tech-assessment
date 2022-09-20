@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GovTech Football Competition Scoreboard',
       theme: ThemeData(
-        primarySwatch: Colors.grey,
+        primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'GovTech Football'),
     );
@@ -147,23 +147,23 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           child: const Text(
             'Enter Teams',
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
-        Container(width: 10),
+        Container(width: 15),
         TextButton(
             onPressed: () async {
               await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
               getScoreboard();
             },
-            child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
-        Container(width: 10),
+            child: const Text('Enter Results', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black))),
+        Container(width: 15),
         TextButton(
             onPressed: () async {
               await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
               getScoreboard();
             },
-            child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
+            child: const Text('Clear Data', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black))),
         Container(width: 50),
       ],
     );
@@ -173,43 +173,75 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 80,
-          elevation: 1,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          title: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Text(
-              widget.title,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-              ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        toolbarHeight: 80,
+        elevation: 1,
+        backgroundColor: Colors.white70,
+        title: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            widget.title,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          actions: [bannerMenu()],
         ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Column(
-                children: <Widget>[
-                  const Text(
-                    'Scoreboard',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: '',
+        actions: [bannerMenu()],
+      ),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Image.asset('background.jpg'),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(30),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: 80),
+                    const Card(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                      color: Colors.white70,
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Text(
+                          'Scoreboard',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: '',
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Container(height: 20),
-                  if (groups.isNotEmpty) scoreboardGridView() else const Text('No Data Entered')
-                ],
+                    const SizedBox(height: 20),
+                    if (groups.isNotEmpty)
+                      scoreboardGridView()
+                    else
+                      const Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                        color: Colors.white70,
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'No Data Entered',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: '',
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 }

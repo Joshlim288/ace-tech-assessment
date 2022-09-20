@@ -5,6 +5,7 @@ Application to track scores and positions of teams in a football tournament
 
 # Assumptions made
 Assuming the application is run in a secure private network and authentication is not required, anyone can access and enter/clear data
+Was designed purely for use on a desktop web browser
 
 # Pre-requisites to run application
 Currently, only Docker is required to be installed
