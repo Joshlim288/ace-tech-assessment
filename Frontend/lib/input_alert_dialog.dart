@@ -17,13 +17,76 @@ class InputDialog extends StatefulWidget {
 
 class InputDialogState extends State<InputDialog> {
   final TextEditingController dialogController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool isLoading = false;
   String? response;
 
+  /// only show when not loading, and when no response received
+  Widget confirmButton() {
+    return TextButton(
+      onPressed: () async {
+        if (formKey.currentState!.validate()) {
+          setState(() {
+            isLoading = true;
+          });
+          if (widget.isInput) {
+            widget.submitFunction(dialogController.text, (returnStr) {
+              setState(() {
+                isLoading = false;
+                response = returnStr;
+              });
+            });
+          } else {
+            widget.submitFunction((returnStr) {
+              setState(() {
+                isLoading = false;
+                response = returnStr;
+              });
+            });
+          }
+        }
+      },
+      child: const Text('Confirm', style: TextStyle(color: Colors.blue)),
+    );
+  }
+
+  /// Defines the text field shown when input data is needed
+  Widget inputField() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.prompt,
+          ),
+        ),
+        if (widget.isInput)
+          SizedBox(
+            width: 400,
+            child: TextFormField(
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                ),
+                border: OutlineInputBorder(),
+              ),
+              controller: dialogController,
+              minLines: 5,
+              maxLines: 5,
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a value';
+                }
+                return null;
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
     return AlertDialog(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -40,43 +103,12 @@ class InputDialogState extends State<InputDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             // password
-            const SizedBox(height: 10),
-            const SizedBox(height: 5),
+            const SizedBox(height: 15),
             isLoading
                 ? const CircularProgressIndicator()
                 : response != null
                     ? Text(response!, style: const TextStyle(color: Colors.black))
-                    : Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.prompt,
-                            ),
-                          ),
-                          if (widget.isInput)
-                            SizedBox(
-                              width: 400,
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                                  ),
-                                  border: OutlineInputBorder(),
-                                ),
-                                controller: dialogController,
-                                minLines: 5,
-                                maxLines: 5,
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a value';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                        ],
-                      )
+                    : inputField(),
           ],
         ),
       ),
@@ -88,33 +120,7 @@ class InputDialogState extends State<InputDialog> {
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        // only show when not loading, and when no response received
-        if (!isLoading && response == null)
-          TextButton(
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                setState(() {
-                  isLoading = true;
-                });
-                if (widget.isInput) {
-                  widget.submitFunction(dialogController.text, (returnStr) {
-                    setState(() {
-                      isLoading = false;
-                      response = returnStr;
-                    });
-                  });
-                } else {
-                  widget.submitFunction((returnStr) {
-                    setState(() {
-                      isLoading = false;
-                      response = returnStr;
-                    });
-                  });
-                }
-              }
-            },
-            child: const Text('Confirm', style: TextStyle(color: Colors.blue)),
-          ),
+        if (!isLoading && response == null) confirmButton()
       ],
     );
   }

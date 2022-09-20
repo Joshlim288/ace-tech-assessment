@@ -37,6 +37,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic> groups = {};
 
+  @override
+  void initState() {
+    super.initState();
+    getScoreboard();
+  }
+
+  /// HELPER FUNCTIONS
+
   /// Used to display a dialog when one of the appbar options are clicked
   Future<void> showInputDialog(String title, String prompt, IconData icon, isInput, Function submitFunction) async {
     await showDialog(
@@ -60,11 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// WIDGETS
+
   /// Defines the grid of scoreboards, one scoreboard for each group
   Widget scoreboardGridView() {
     String currentGroup;
     List<dynamic> teams;
     return Center(
+      /// Grid of cards
       child: ResponsiveGridList(
         shrinkWrap: true,
         desiredItemWidth: 650,
@@ -72,7 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
           (i) {
             currentGroup = i;
             teams = groups[currentGroup] as List<dynamic>;
-            // One Card for one group
+
+            /// One Card for one group
             return Card(
               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
               child: Padding(
@@ -90,6 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 10),
+
+                    /// One table for each team
                     DataTable(
                       showBottomBorder: true,
                       columns: const <DataColumn>[
@@ -122,12 +136,40 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getScoreboard();
+  /// Banner items at the top right, for triggering data updates
+  Widget bannerMenu() {
+    return Row(
+      children: [
+        TextButton(
+          onPressed: () async {
+            await showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
+            getScoreboard();
+          },
+          child: const Text(
+            'Enter Teams',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        Container(width: 10),
+        TextButton(
+            onPressed: () async {
+              await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
+              getScoreboard();
+            },
+            child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
+        Container(width: 10),
+        TextButton(
+            onPressed: () async {
+              await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
+              getScoreboard();
+            },
+            child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
+        Container(width: 50),
+      ],
+    );
   }
 
+  /// Defines the overall structure of the page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,37 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          actions: [
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    await showInputDialog('Team Registration', 'Enter Teams:', Icons.group_add, true, ApiConnection.enterTeams);
-                    getScoreboard();
-                  },
-                  child: const Text(
-                    'Enter Teams',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                Container(width: 10),
-                TextButton(
-                    onPressed: () async {
-                      await showInputDialog('Match Results Entry', 'Enter Results:', Icons.scoreboard, true, ApiConnection.enterResults);
-                      getScoreboard();
-                    },
-                    child: const Text('Enter Results', style: TextStyle(color: Colors.black))),
-                Container(width: 10),
-                TextButton(
-                    onPressed: () async {
-                      await showInputDialog('Clear Data', 'Delete all Team information from the system', Icons.warning_rounded, false, ApiConnection.clearData);
-                      getScoreboard();
-                    },
-                    child: const Text('Clear Data', style: TextStyle(color: Colors.black))),
-                Container(width: 50),
-              ],
-            )
-          ],
+          actions: [bannerMenu()],
         ),
         body: SingleChildScrollView(
           child: Center(
