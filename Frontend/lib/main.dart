@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            Image.asset('background.jpg'),
+            Image.asset('assets/background.jpg'),
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(30),
