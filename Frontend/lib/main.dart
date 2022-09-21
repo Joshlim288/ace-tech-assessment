@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'GovTech Football'),
+      home: const MyHomePage(title: 'Football Scoreboard'),
     );
   }
 }
@@ -201,22 +201,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   children: <Widget>[
                     const SizedBox(height: 80),
-                    const Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                      color: Colors.white70,
-                      child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          'Scoreboard',
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: '',
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                     if (groups.isNotEmpty)
                       scoreboardGridView()
                     else
