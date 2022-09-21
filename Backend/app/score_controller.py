@@ -28,7 +28,7 @@ message, statusCode
 def registerTeams(rawTeams):
     teamsStrings = rawTeams.strip().split('\n')
     teams = []
-    seenNames = set()
+    seenNames = set(data_access.getTeams().keys()) # we want to reject any duplicate team registration
     for teamString in teamsStrings:
         # validate format of each entered team string
         if not re.fullmatch(TEAM_INFO_REGEX, teamString):
@@ -47,6 +47,7 @@ def registerTeams(rawTeams):
             return 'Duplicate team name: ' + teamName, 400
 
         teams += [Team(teamName, regDate, int(group))]
+        seenNames.add(teamName) # we reject duplicates in input as well
 
     # commit updates
     if not data_access.addTeamsToDatabase(teams):
