@@ -8,7 +8,7 @@ from pathlib import Path
 
 # project imports
 from data_definition import Team
-client = pymongo.MongoClient(os.environ['ME_CONFIG_MONGODB_URL'])
+client = pymongo.MongoClient(os.environ.get('ME_CONFIG_MONGODB_URL', 'mongodb://admin:password@mongo:27017/'))
 db = client.football_scoreboard
 collection = db.teams
 
