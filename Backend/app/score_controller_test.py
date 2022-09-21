@@ -36,7 +36,7 @@ class ScoreControllerCase(unittest.TestCase):
         assert response[1] == 200, "Valid input rejected with return value " + str(response)
     
     @mock.patch('score_controller.data_access')
-    def testRegisterValidTeams(self, mock_DAL):
+    def testScoreboardOrdering(self, mock_DAL):
         # setup mock data access layer
         # Normal points > total goals > alt match points > earliest reg date
         # A clear winner, B-E tied by points, C-E tied by goals, D-E tied by altPoints
