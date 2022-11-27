@@ -11,7 +11,6 @@ Application to track scores and positions of teams in a football tournament
 Currently, only Docker is required to be installed.
 
 # Running the application
-The app has been deployed to Netlify at https://ace-football-scoreboard.netlify.app/
 
 ## Local run
 1. Navigate to `ACE` directory and run `Docker compose up`
